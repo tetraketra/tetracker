@@ -7,7 +7,6 @@
 
 #include <time.h>
 #include <unistd.h>
-#include <panel.h>
 
 int main(void) {
     const int FPS = 60;
