@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "stdlib.h": "c",
+        "ncurses.h": "c",
+        "stdio.h": "c",
+        "curses.h": "c",
+        "panel.h": "c",
+        "wctype.h": "c",
+        "ncurses_setup.h": "c",
+        "locale.h": "c",
+        "unistd.h": "c",
+        "win_info.h": "c",
+        "ncurses_window_utils.h": "c"
+    }
+}
