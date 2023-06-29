@@ -36,7 +36,7 @@ int main(void) {
 
     WIN_INFO outer_notes_panel = {
         .starty = maxlines / 2, .startx = 0,
-        .height = maxlines - maxlines / 2 + maxlines % 2, .width = maxcols,
+        .height = maxlines / 2 + maxlines % 2 + 1, .width = maxcols,
         .border = WB_CONNECTS_UP
     };
     window_init_with_border(windows, WO_OTP, &outer_notes_panel);
@@ -74,15 +74,17 @@ int main(void) {
 
                 outer_notes_panel = (WIN_INFO) {
                     .starty = maxlines / 2, .startx = 0,
-                    .height = maxlines - maxlines / 2 + maxlines % 2, .width = maxcols,
+                    .height = maxlines / 2 + maxlines % 2 + 1, .width = maxcols,
                     .border = WB_CONNECTS_UP
                 };
                 window_move_and_resize(windows, WO_OTP, &outer_notes_panel);
 
+                refresh();
+
                 for (int i = 0; i < WINDOW_COUNT; i++) {
                     wrefresh(windows[i]);
                 }
-
+                
                 break;
         }
 
