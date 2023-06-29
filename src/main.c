@@ -1,6 +1,3 @@
-#define WINDOW_COUNT 2
-#define SPECIAL_EXIT_KEY 'q'
-
 #include "ncurses_window_utils.h"
 #include "win_info.h"
 #include "ncurses_setup.h"
@@ -8,12 +5,22 @@
 #include <time.h>
 #include <unistd.h>
 
+#define WINDOW_COUNT 2
+enum WIN_ORDER {
+        WO_BASE,
+        WO_OTP,
+    };
+
+#define SPECIAL_EXIT_KEY 'q'
+
+
 int main(void) {
+
+    // setup
     const int FPS = 60;
     const int FRAME_TIME_MICROSECONDS = 1000000 / FPS;
     clock_t start_time, end_time;
 
-    // ncurses setup
     WINDOW* windows[WINDOW_COUNT];
 
     ncurses_setup(FPS);
@@ -21,12 +28,7 @@ int main(void) {
     int maxlines = LINES - 1;
     int maxcols = COLS - 1;
 
-    // window initializations
-    enum WIN_ORDER {
-        WO_BASE,
-        WO_OTP,
-    };
-
+    // intialize
     WIN_INFO base = {
         .starty = 0, .startx = 0,
         .height = maxlines, .width = maxcols,
@@ -51,13 +53,12 @@ int main(void) {
         ch = getch();
         start_time = clock();
 
-        // handle input
         switch (ch) {
-            case SPECIAL_EXIT_KEY:
+            case SPECIAL_EXIT_KEY: // close
                 endwin();
                 return 0;
 
-            case KEY_RESIZE:
+            case KEY_RESIZE: // re-init
                 maxlines = LINES - 1;
                 maxcols = COLS - 1;
 
@@ -96,4 +97,3 @@ int main(void) {
         }
     }
 }
-
