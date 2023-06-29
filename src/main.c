@@ -15,7 +15,7 @@ enum WIN_ORDER {
 
 
 int main(void) {
-
+    
     // setup
     const int FPS = 60;
     const int FRAME_TIME_MICROSECONDS = 1000000 / FPS;
@@ -28,7 +28,7 @@ int main(void) {
     int maxlines = LINES - 1;
     int maxcols = COLS - 1;
 
-    // intialize
+    // init windows
     WIN_INFO base = {
         .starty = 0, .startx = 0,
         .height = maxlines, .width = maxcols,
@@ -56,9 +56,10 @@ int main(void) {
         switch (ch) {
             case SPECIAL_EXIT_KEY: // close
                 endwin();
+                exit_curses(0);
                 return 0;
 
-            case KEY_RESIZE: // re-init
+            case KEY_RESIZE: // re-init windows
                 maxlines = LINES - 1;
                 maxcols = COLS - 1;
 
