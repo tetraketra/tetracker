@@ -1,10 +1,10 @@
 #ifndef PAT_INFO_H
 #define PAT_INFO_H
 
-#define CHANNELS 16
-#define STEPS 128
+#define CHANNELS 5
+#define STEPS 129
 #define PATTERNS 256
-#define CHANNEL_ARGS 4
+#define CHANNEL_ARGS 4 // can change!
 #define CHANNEL_WIDTH (3 + 1 + CHANNEL_ARGS + 1) // +1 for whitespace
 
 typedef struct {

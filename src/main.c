@@ -10,14 +10,22 @@
 enum WIN_ORDER {
     WO_BASE,
     WO_OTP,
+    _PADS_START,
     WO_NOTES_PAD,
     WO_STEP_COUNT_PAD,
+    _PADS_END,
     _WINDOWS,
 }; 
 
 #define SPECIAL_EXIT_KEY 'q'
 
-void refresh_all(WINDOW* windows[], int maxlines, int maxcols, int pds_y, int pds_x) {
+void refresh_all(
+    WINDOW* windows[], 
+    int maxlines, int maxcols, 
+    int pds_y, int pds_x,
+    int usercursor_window, 
+    int usercursor_y_on_window, int usercursor_x_on_window) {
+    
     for (int i = 0; i < _WINDOWS; i++) {
         if (i == WO_STEP_COUNT_PAD) {
             prefresh(windows[i], \
@@ -35,6 +43,8 @@ void refresh_all(WINDOW* windows[], int maxlines, int maxcols, int pds_y, int pd
         } else {
             wrefresh(windows[i]);
         }
+
+        wmove(windows[usercursor_window], usercursor_y_on_window, usercursor_x_on_window);
     }
 }
 
@@ -51,6 +61,10 @@ int main(void) {
 
     int maxlines = LINES - 1;
     int maxcols = COLS - 1;
+
+    int usercursor_y_on_window = 0;
+    int usercursor_x_on_window = 0;
+    int usercursor_window = WO_NOTES_PAD;
 
     PATTERN pattern;
     pattern_init_notes_pad(&pattern);
@@ -83,7 +97,12 @@ int main(void) {
     }
     
     // push initial states to screen
-    refresh_all(windows, maxlines, maxcols, pad_display_start_y, pad_display_start_x);
+    refresh_all(
+        windows, 
+        maxlines, maxcols, 
+        pad_display_start_y, pad_display_start_x,
+        usercursor_window, 
+        usercursor_y_on_window, usercursor_x_on_window);
 
     // draw loop
     int ch;
@@ -100,12 +119,51 @@ int main(void) {
                 exit_curses(0);
                 return 0;
 
+            case KEY_DOWN ... KEY_RIGHT:
+                switch (ch) {
+                    case KEY_DOWN:
+                        if (usercursor_window == WO_NOTES_PAD) {
+                            if (usercursor_y_on_window + 1 < STEPS - 1)
+                                usercursor_y_on_window++;  
+                            if (usercursor_y_on_window > pad_display_start_y + maxlines / 2 + maxlines % 2 - 2)
+                                pad_display_start_y++;
+                        }
+                        
+                        break;
+
+                    case KEY_UP:
+                        if (usercursor_window == WO_NOTES_PAD) { 
+                            if (usercursor_y_on_window > 0) 
+                                usercursor_y_on_window--;   
+                            if (pad_display_start_y > usercursor_y_on_window)
+                                pad_display_start_y--;
+                        }
+
+                        break;
+                    case KEY_LEFT:
+                        usercursor_x_on_window--;
+                        break;
+                    case KEY_RIGHT:
+                        usercursor_x_on_window++;
+                        break;
+                }
+
+                refresh_all(
+                    windows, 
+                    maxlines, maxcols, 
+                    pad_display_start_y, pad_display_start_x,
+                    usercursor_window, 
+                    usercursor_y_on_window, usercursor_x_on_window);
+                break;
+
             case KEY_RESIZE: // re-init windows
                 maxlines = LINES - 1;
                 maxcols = COLS - 1;
 
                 for (int i = 0; i < _WINDOWS; i++) {
-                    werase(windows[i]);
+                    if (i < _PADS_START || i > _PADS_END) {
+                        werase(windows[i]);
+                    }
                 }
 
                 base = (WIN_INFO) {
@@ -122,11 +180,19 @@ int main(void) {
                 };
                 window_move_and_resize(windows, WO_OTP, &outer_notes_panel);
 
-                pattern_draw(windows, WO_NOTES_PAD, &pattern);
+                usercursor_window = WO_NOTES_PAD;
+                usercursor_y_on_window = 0;
+                usercursor_x_on_window = 0;
 
-                refresh_all(windows, maxlines, maxcols, pad_display_start_y, pad_display_start_x);
-                
+                refresh_all(
+                    windows, 
+                    maxlines, maxcols, 
+                    pad_display_start_y, pad_display_start_x,
+                    usercursor_window, 
+                    usercursor_y_on_window, usercursor_x_on_window);
                 break;
+
+                
         }
 
         // sync to FPS
@@ -135,5 +201,8 @@ int main(void) {
         if (sleep_time_microseconds > 0) {
             usleep(sleep_time_microseconds);
         }
+
+        // just in case
+        // wmove(windows[usercursor_window], usercursor_y_on_window, usercursor_x_on_window);
     }
 }
