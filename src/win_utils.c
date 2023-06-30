@@ -1,5 +1,5 @@
 #include <ncursesw/curses.h>
-#include "ncurses_window_utils.h"
+#include "win_utils.h"
 
 WINDOW* window_init(WIN_INFO* info_struct) {
     return newwin(info_struct->height, info_struct->width, info_struct->starty, info_struct->startx);

@@ -11,6 +11,9 @@
         "unistd.h": "c",
         "win_info.h": "c",
         "ncurses_window_utils.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "win_utils.h": "c",
+        "pat_info.h": "c",
+        "pat_utils.h": "c"
     }
 }

@@ -14,12 +14,9 @@ find ./ -type f \( -iname \*.c -o -iname \*.h \) \
     | xargs wc -l \
     | sort -nr
 
-echo "\nBuilding..."
+
 gcc $FILES -o ./bin/tetracker $WARNS $LINKS $DEBUG -ftime-report \
     > tmp.txt 2>&1
-cat tmp.txt \
-    | grep -v -E '^(Time variable| [[:alnum:]])' \
-    | grep -v '^$'
 
 echo "\nReporting..."
 cat tmp.txt \
@@ -33,6 +30,11 @@ cat tmp.txt \
             }
             print 
         }'
+
+echo "\nBuilding..."
+cat tmp.txt \
+    | grep -v -E '^(Time variable| [[:alnum:]])' \
+    | grep -v '^$'
 
 rm tmp.txt
 

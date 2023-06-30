@@ -1,32 +1,59 @@
-#include "ncurses_window_utils.h"
+#include "win_utils.h"
 #include "win_info.h"
+#include "pat_info.h"
+#include "pat_utils.h"
 #include "ncurses_setup.h"
 
 #include <time.h>
 #include <unistd.h>
 
-#define WINDOW_COUNT 2
 enum WIN_ORDER {
-        WO_BASE,
-        WO_OTP,
-    };
+    WO_BASE,
+    WO_OTP,
+    WO_NOTES_PAD,
+    WO_STEP_COUNT_PAD,
+    _WINDOWS,
+}; 
 
 #define SPECIAL_EXIT_KEY 'q'
 
+void refresh_all(WINDOW* windows[], int maxlines, int maxcols, int pds_y, int pds_x) {
+    for (int i = 0; i < _WINDOWS; i++) {
+        if (i == WO_STEP_COUNT_PAD) {
+            prefresh(windows[i], \
+                pds_y, 0, \
+                maxlines / 2 + 1, 1, \
+                maxlines - 1, 5);
+        }
+        
+        if (i == WO_NOTES_PAD) {
+            prefresh(windows[i], \
+                pds_y, pds_x, \
+                maxlines / 2 + 1, 5, \
+                maxlines - 1, maxcols - 2);
+
+        } else {
+            wrefresh(windows[i]);
+        }
+    }
+}
 
 int main(void) {
-    
+
     // setup
     const int FPS = 60;
     const int FRAME_TIME_MICROSECONDS = 1000000 / FPS;
     clock_t start_time, end_time;
 
-    WINDOW* windows[WINDOW_COUNT];
+    WINDOW* windows[_WINDOWS];
 
     ncurses_setup(FPS);
 
     int maxlines = LINES - 1;
     int maxcols = COLS - 1;
+
+    PATTERN pattern;
+    pattern_init_notes_pad(&pattern);
 
     // init windows
     WIN_INFO base = {
@@ -43,9 +70,20 @@ int main(void) {
     };
     window_init_with_border(windows, WO_OTP, &outer_notes_panel);
 
-    for (int i = 0; i < WINDOW_COUNT; i++) {
-        wrefresh(windows[i]);
+    // init pad(s)
+    int pad_display_start_y = 0, pad_display_start_x = 0;
+    windows[WO_NOTES_PAD] = newpad(STEPS, CHANNELS * CHANNEL_WIDTH);
+    pattern_draw(windows, WO_NOTES_PAD, &pattern);
+    
+    windows[WO_STEP_COUNT_PAD] = newpad(STEPS, 3);
+    for (int step = 0; step < STEPS; step++) {
+        char str[12];
+        snprintf(str, sizeof(str), "%03d", step);
+        mvwaddnstr(windows[WO_STEP_COUNT_PAD], step, 0, str, 3);
     }
+    
+    // push initial states to screen
+    refresh_all(windows, maxlines, maxcols, pad_display_start_y, pad_display_start_x);
 
     // draw loop
     int ch;
@@ -55,6 +93,9 @@ int main(void) {
 
         switch (ch) {
             case SPECIAL_EXIT_KEY: // close
+                for (int i = 0; i < _WINDOWS; i++) {
+                    delwin(windows[i]);
+                }
                 endwin();
                 exit_curses(0);
                 return 0;
@@ -63,7 +104,7 @@ int main(void) {
                 maxlines = LINES - 1;
                 maxcols = COLS - 1;
 
-                for (int i = 0; i < WINDOW_COUNT; i++) {
+                for (int i = 0; i < _WINDOWS; i++) {
                     werase(windows[i]);
                 }
 
@@ -81,11 +122,9 @@ int main(void) {
                 };
                 window_move_and_resize(windows, WO_OTP, &outer_notes_panel);
 
-                refresh();
+                pattern_draw(windows, WO_NOTES_PAD, &pattern);
 
-                for (int i = 0; i < WINDOW_COUNT; i++) {
-                    wrefresh(windows[i]);
-                }
+                refresh_all(windows, maxlines, maxcols, pad_display_start_y, pad_display_start_x);
                 
                 break;
         }
