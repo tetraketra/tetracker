@@ -123,12 +123,11 @@ int main(void) {
                 switch (ch) {
                     case KEY_DOWN:
                         if (usercursor_window == WO_NOTES_PAD) {
-                            if (usercursor_y_on_window + 1 < STEPS - 1)
-                                usercursor_y_on_window++;  
+                            if (usercursor_y_on_window + 2 < STEPS) 
+                                usercursor_y_on_window++;
                             if (usercursor_y_on_window > pad_display_start_y + maxlines / 2 + maxlines % 2 - 2)
                                 pad_display_start_y++;
-                        }
-                        
+                        }   
                         break;
 
                     case KEY_UP:
@@ -138,8 +137,8 @@ int main(void) {
                             if (pad_display_start_y > usercursor_y_on_window)
                                 pad_display_start_y--;
                         }
-
                         break;
+
                     case KEY_LEFT:
                         usercursor_x_on_window--;
                         break;
@@ -154,6 +153,7 @@ int main(void) {
                     pad_display_start_y, pad_display_start_x,
                     usercursor_window, 
                     usercursor_y_on_window, usercursor_x_on_window);
+                
                 break;
 
             case KEY_RESIZE: // re-init windows
