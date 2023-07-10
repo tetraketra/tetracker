@@ -18,11 +18,32 @@ void window_draw_border_to(WINDOW* windows[], int win_order_code, WIN_INFO* info
 
 void window_init_with_border(WINDOW* windows[], int win_order_code, WIN_INFO* info_struct) {
     windows[win_order_code] = window_init(info_struct);
-    window_draw_border_to(windows, win_order_code, info_struct);
+    if (info_struct->draw_border)
+        window_draw_border_to(windows, win_order_code, info_struct);
 };
 
 void window_move_and_resize(WINDOW* windows[], int win_order_code, WIN_INFO* info_struct) {
     mvwin(windows[win_order_code], info_struct->starty, info_struct->startx);
     wresize(windows[win_order_code], info_struct->height, info_struct->width);
-    window_draw_border_to(windows, win_order_code, info_struct);
+    if (info_struct->draw_border)
+        window_draw_border_to(windows, win_order_code, info_struct);
+};
+
+void windows_refresh_all(WINDOW* windows[], int win_count) {
+    for (int i = 0; i < win_count; i++) {
+        wrefresh(windows[i]);
+    }
+}
+
+void windows_clear_all(WINDOW* windows[], int win_count) {
+    for (int i = 0; i < win_count; i++) {
+        werase(windows[i]);
+    }
+}
+
+void windows_draw_borders_to_all(WINDOW* windows[], int win_count, WIN_INFO* info_structs[]) {
+    for (int i = 0; i < win_count; i++) {
+        if (info_structs[i]->draw_border)
+            window_draw_border_to(windows, i, info_structs[i]);
+    }
 };

@@ -14,6 +14,9 @@
         "time.h": "c",
         "win_utils.h": "c",
         "pat_info.h": "c",
-        "pat_utils.h": "c"
+        "pat_utils.h": "c",
+        "stdbool.h": "c",
+        "pattern.h": "c",
+        "string.h": "c"
     }
 }

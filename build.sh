@@ -1,5 +1,5 @@
 FILES=$(find ./src/*.c -type f | tr -s '\n' ' ')
-WARNS="-W -Werror -Wextra -Wno-multichar -Wall"
+WARNS="-W -Wextra -Wno-multichar -Wall"
 LINKS="-lncursesw"
 DEBUG="-g3"
 

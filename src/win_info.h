@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #ifndef WIN_INFO_H
 #define WIN_INFO_H
 
@@ -10,6 +12,7 @@ typedef struct {
 	int startx, starty;
 	int height, width;
 	WIN_BORDER border;
+	bool draw_border;
 } WIN_INFO;
 
 extern WIN_BORDER WB_STANDALONE;
