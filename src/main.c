@@ -5,6 +5,7 @@
 
 #include <time.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 enum WIN_ORDER {
     WO_BASE,
@@ -25,11 +26,11 @@ int main(void) {
 
     ncurses_setup(FPS);
 
-    int maxlines = LINES - 2;
+    int maxlines = LINES - 1;
     int maxcols = COLS - 1;
 
     // init patterns
-    PATTERN patterns[PATTERNS];
+    PATTERN* patterns = malloc(sizeof(PATTERN) * PATTERNS);
     patterns_init(patterns);
 
     // init windows
@@ -72,13 +73,14 @@ int main(void) {
                 }
                 endwin();
                 exit_curses(0);
+                free(patterns);
                 return 0;
 
             case KEY_DOWN ... KEY_RIGHT:            
                 break;
 
             case KEY_RESIZE: // re-init windows
-                maxlines = LINES - 2;
+                maxlines = LINES - 1;
                 maxcols = COLS - 1;
 
                 base = (WIN_INFO) {
@@ -99,6 +101,7 @@ int main(void) {
                 break;
         }
 
+        refresh(); // ncurses needs this more than I need a life
         windows_refresh_all(windows, _WINDOWS);
         
 
