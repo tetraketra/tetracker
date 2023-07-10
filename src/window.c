@@ -1,5 +1,11 @@
 #include <ncursesw/curses.h>
-#include "win_utils.h"
+#include "window.h"
+
+WIN_BORDER WB_STANDALONE =     {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╔", .tr = "╗", .bl = "╚", .br = "╝"};
+WIN_BORDER WB_CONNECTS_RIGHT = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╔", .tr = "╦", .bl = "╚", .br = "╩"};
+WIN_BORDER WB_CONNECTS_LEFT =  {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╦", .tr = "╗", .bl = "╩", .br = "╝"};
+WIN_BORDER WB_CONNECTS_UP =    {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╠", .tr = "╣", .bl = "╚", .br = "╝"};
+WIN_BORDER WB_CONNECTS_DOWN =  {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╔", .tr = "╗", .bl = "╠", .br = "╠"};
 
 WINDOW* window_init(WIN_INFO* info_struct) {
     return newwin(info_struct->height, info_struct->width, info_struct->starty, info_struct->startx);
@@ -47,3 +53,4 @@ void windows_draw_borders_to_all(WINDOW* windows[], int win_count, WIN_INFO* inf
             window_draw_border_to(windows, i, info_structs[i]);
     }
 };
+

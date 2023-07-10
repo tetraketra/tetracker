@@ -1,6 +1,5 @@
-#include "win_utils.h"
-#include "win_info.h"
 #include "ncurses_setup.h"
+#include "window.h"
 #include "pattern.h"
 
 #include <time.h>
@@ -103,7 +102,6 @@ int main(void) {
 
         refresh(); // ncurses needs this more than I need a life
         windows_refresh_all(windows, _WINDOWS);
-        
 
         // sync to FPS
         end_time = clock();

@@ -17,6 +17,7 @@
         "pat_utils.h": "c",
         "stdbool.h": "c",
         "pattern.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "window.h": "c"
     }
 }
