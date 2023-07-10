@@ -3,7 +3,7 @@
 
 void patterns_init(PATTERN patterns[]) {
     char args_template[CHANNEL_ARGS]; // "---... args"
-    for (int arg; arg < CHANNEL_ARGS; arg++) {
+    for (int arg = 0; arg < CHANNEL_ARGS; arg++) {
         args_template[arg] = '-';
     }
 
