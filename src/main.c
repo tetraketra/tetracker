@@ -100,7 +100,6 @@ int main(void) {
                 break;
         }
 
-        refresh(); // ncurses needs this more than I need a life
         windows_refresh_all(windows, _WINDOWS);
 
         // sync to FPS

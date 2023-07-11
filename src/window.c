@@ -36,6 +36,7 @@ void window_move_and_resize(WINDOW* windows[], int win_order_code, WIN_INFO* inf
 };
 
 void windows_refresh_all(WINDOW* windows[], int win_count) {
+    refresh(); // ncurses needs this more than I need a life
     for (int i = 0; i < win_count; i++) {
         wrefresh(windows[i]);
     }
