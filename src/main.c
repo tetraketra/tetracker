@@ -6,13 +6,14 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#define SPECIAL_EXIT_KEY 'q'
+
 enum WIN_ORDER {
     WO_BASE,
-    WO_OTP,
+    WO_ONP,
+    WO_ONP_RF,
     _WINDOWS,
 }; 
-
-#define SPECIAL_EXIT_KEY 'q'
 
 int main(void) {
 
@@ -29,6 +30,11 @@ int main(void) {
     int maxcols = COLS - 1;
 
     // init patterns
+    int active_pattern = 0;
+    int step_offset = 0;
+    int channel_offset = 0;
+    int channels_can_fit = (maxcols - 2 - 5)/CHANNEL_CHAR_WIDTH;
+
     PATTERN* patterns = malloc(sizeof(PATTERN) * PATTERNS);
     patterns_init(patterns);
 
@@ -39,7 +45,6 @@ int main(void) {
         .border = WB_STANDALONE,
         .draw_border = true
     };
-    window_init_with_border(windows, WO_BASE, &base);
 
     WIN_INFO outer_notes_panel = {
         .starty = maxlines / 2, .startx = 0,
@@ -47,16 +52,21 @@ int main(void) {
         .border = WB_CONNECTS_UP,
         .draw_border = true
     };
-    window_init_with_border(windows, WO_OTP, &outer_notes_panel);
 
-    WIN_INFO step = {
-        .starty = 0, .startx = 2,
-        .height = 1, .width = maxcols - 2,
-        .border = WB_STANDALONE,
-        .draw_border = false
+    WIN_INFO onp_right_filler = {
+        .starty = maxlines / 2, .startx = channels_can_fit*CHANNEL_CHAR_WIDTH + 6,
+        .height = maxlines / 2 + maxlines % 2 + 1, .width = maxcols - (channels_can_fit*CHANNEL_CHAR_WIDTH + 6),
+        .border = (WIN_BORDER) {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╦", .tr = "╣", .bl = "╩", .br = "╝"},
+        .draw_border = true
     };
-    // TODO: pattern draw
 
+    // all the draw calls // TODO make macro ?
+    window_init_with_border(windows, WO_BASE, &base);
+    window_init_with_border(windows, WO_ONP, &outer_notes_panel);
+    window_init_with_border(windows, WO_ONP_RF, &onp_right_filler);
+    patterns_draw_active(windows, WO_ONP, patterns, active_pattern, step_offset, channel_offset, (maxcols - 2 - 5)/CHANNEL_CHAR_WIDTH, maxlines / 2 + maxlines % 2 - 1);
+    // all the draw calls
+    
     windows_refresh_all(windows, _WINDOWS); // push initial states to screen
     
     // draw loop
@@ -81,6 +91,7 @@ int main(void) {
             case KEY_RESIZE: // re-init windows
                 maxlines = LINES - 1;
                 maxcols = COLS - 1;
+                channels_can_fit = (maxcols - 2 - 5)/CHANNEL_CHAR_WIDTH;
 
                 base = (WIN_INFO) {
                     .starty = 0, .startx = 0,
@@ -88,15 +99,28 @@ int main(void) {
                     .border = WB_STANDALONE,
                     .draw_border = true
                 };
-                window_move_and_resize(windows, WO_BASE, &base);
-
+                
                 outer_notes_panel = (WIN_INFO) {
                     .starty = maxlines / 2, .startx = 0,
                     .height = maxlines / 2 + maxlines % 2 + 1, .width = maxcols,
                     .border = WB_CONNECTS_UP,
                     .draw_border = true
                 };
-                window_move_and_resize(windows, WO_OTP, &outer_notes_panel);
+
+                WIN_INFO onp_right_filler = {
+                    .starty = maxlines / 2, .startx = channels_can_fit*CHANNEL_CHAR_WIDTH + 6,
+                    .height = maxlines / 2 + maxlines % 2 + 1, .width = maxcols - (channels_can_fit*CHANNEL_CHAR_WIDTH + 6),
+                    .border = (WIN_BORDER) {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╦", .tr = "╣", .bl = "╩", .br = "╝"},
+                    .draw_border = true
+                };
+
+                // all the draw calls // TODO make macro ?
+                window_move_and_resize_and_draw_border_to(windows, WO_BASE, &base);
+                window_move_and_resize_and_draw_border_to(windows, WO_ONP, &outer_notes_panel);
+                window_move_and_resize_and_draw_border_to(windows, WO_ONP_RF, &onp_right_filler);
+                patterns_draw_active(windows, WO_ONP, patterns, active_pattern, step_offset, channel_offset, channels_can_fit, maxlines / 2 + maxlines % 2 - 1);
+                // all the draw calls
+
                 break;
         }
 
