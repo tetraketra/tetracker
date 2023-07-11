@@ -8,6 +8,15 @@
 
 #define SPECIAL_EXIT_KEY 'q'
 
+#define min(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a < _b ? _a : _b; })
+#define max(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a > _b ? _a : _b; })
+
 enum WIN_ORDER {
     WO_BASE,
     WO_ONP,
@@ -18,7 +27,7 @@ enum WIN_ORDER {
 int main(void) {
 
     // setup
-    const int FPS = 60;
+    const int FPS = 10000;
     const int FRAME_TIME_MICROSECONDS = 1000000 / FPS;
     clock_t start_time, end_time;
 
@@ -27,35 +36,36 @@ int main(void) {
     ncurses_setup(FPS);
 
     int maxlines = LINES - 1;
-    int maxcols = COLS - 1;
+    int maxcols = COLS;
 
     // init patterns
     int active_pattern = 0;
     int step_offset = 0;
     int channel_offset = 0;
-    int channels_can_fit = (maxcols - 2 - 5)/CHANNEL_CHAR_WIDTH;
+    int channels_can_fit = min(CHANNELS, (maxcols - 2 - 5)/CHANNEL_CHAR_WIDTH);
 
-    PATTERN* patterns = malloc(sizeof(PATTERN) * PATTERNS);
+    PATTERN* patterns = calloc(PATTERNS, sizeof(PATTERN));
     patterns_init(patterns);
 
     // init windows
     WIN_INFO base = {
         .starty = 0, .startx = 0,
         .height = maxlines, .width = maxcols,
-        .border = WB_STANDALONE,
+        .border = (WIN_BORDER) {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╔", .tr = "╗", .bl = "╚", .br = "╝"},
         .draw_border = true
     };
 
     WIN_INFO outer_notes_panel = {
         .starty = maxlines / 2, .startx = 0,
         .height = maxlines / 2 + maxlines % 2 + 1, .width = maxcols,
-        .border = WB_CONNECTS_UP,
+        .border = (WIN_BORDER) {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╠", .tr = "╣", .bl = "╚", .br = "╝"},
         .draw_border = true
     };
 
+    int onprf_startx = channels_can_fit*CHANNEL_CHAR_WIDTH + 6;
     WIN_INFO onp_right_filler = {
-        .starty = maxlines / 2, .startx = channels_can_fit*CHANNEL_CHAR_WIDTH + 6,
-        .height = maxlines / 2 + maxlines % 2 + 1, .width = maxcols - (channels_can_fit*CHANNEL_CHAR_WIDTH + 6),
+        .starty = maxlines / 2, .startx = onprf_startx,
+        .height = maxlines / 2 + maxlines % 2 + 1, .width = maxcols - onprf_startx,
         .border = (WIN_BORDER) {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╦", .tr = "╣", .bl = "╩", .br = "╝"},
         .draw_border = true
     };
@@ -90,26 +100,27 @@ int main(void) {
 
             case KEY_RESIZE: // re-init windows
                 maxlines = LINES - 1;
-                maxcols = COLS - 1;
-                channels_can_fit = (maxcols - 2 - 5)/CHANNEL_CHAR_WIDTH;
+                maxcols = COLS;
+                channels_can_fit = min(CHANNELS, (maxcols - 2 - 5)/CHANNEL_CHAR_WIDTH);
 
                 base = (WIN_INFO) {
                     .starty = 0, .startx = 0,
                     .height = maxlines, .width = maxcols,
-                    .border = WB_STANDALONE,
+                    .border = (WIN_BORDER) {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╔", .tr = "╗", .bl = "╚", .br = "╝"},
                     .draw_border = true
                 };
                 
                 outer_notes_panel = (WIN_INFO) {
                     .starty = maxlines / 2, .startx = 0,
                     .height = maxlines / 2 + maxlines % 2 + 1, .width = maxcols,
-                    .border = WB_CONNECTS_UP,
+                    .border = (WIN_BORDER) {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╠", .tr = "╣", .bl = "╚", .br = "╝"},
                     .draw_border = true
                 };
 
+                int onprf_startx = channels_can_fit*CHANNEL_CHAR_WIDTH + 6;
                 WIN_INFO onp_right_filler = {
-                    .starty = maxlines / 2, .startx = channels_can_fit*CHANNEL_CHAR_WIDTH + 6,
-                    .height = maxlines / 2 + maxlines % 2 + 1, .width = maxcols - (channels_can_fit*CHANNEL_CHAR_WIDTH + 6),
+                    .starty = maxlines / 2, .startx = onprf_startx,
+                    .height = maxlines / 2 + maxlines % 2 + 1, .width = maxcols - onprf_startx,
                     .border = (WIN_BORDER) {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╦", .tr = "╣", .bl = "╩", .br = "╝"},
                     .draw_border = true
                 };

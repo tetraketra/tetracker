@@ -5,7 +5,7 @@
 
 #define CHANNEL_ARGS 4
 #define CHANNEL_CHAR_WIDTH (3 + 1 + CHANNEL_ARGS + 1)
-#define CHANNELS 32
+#define CHANNELS 10
 #define STEPS 128
 #define PATTERNS 256
 

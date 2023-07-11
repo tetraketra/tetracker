@@ -15,25 +15,6 @@ typedef struct {
 	bool draw_border;
 } WIN_INFO;
 
-extern WIN_BORDER WB_STANDALONE;
-
-extern WIN_BORDER WB_CONNECTS_RIGHT;
-extern WIN_BORDER WB_CONNECTS_LEFT;
-extern WIN_BORDER WB_CONNECTS_UP;
-extern WIN_BORDER WB_CONNECTS_DOWN;
-
-extern WIN_BORDER WB_CONNECTS_RIGHT_DOWN; 
-extern WIN_BORDER WB_CONNECTS_RIGHT_UP;
-extern WIN_BORDER WB_CONNECTS_RIGHT_UP_DOWN;
-
-extern WIN_BORDER WB_CONNECTS_LEFT_DOWN;
-extern WIN_BORDER WB_CONNECTS_LEFT_UP;
-extern WIN_BORDER WB_CONNECTS_LEFT_UP_DOWN;
-
-extern WIN_BORDER WB_CONNECTS_LR_DOWN;
-extern WIN_BORDER WB_CONNECTS_LR_UP;
-extern WIN_BORDER WB_CONNECTS_LR_UP_DOWN;
-
 WINDOW* window_init(WIN_INFO* info_struct);
 void window_draw_border_to(WINDOW* windows[], int win_order_code, WIN_INFO* info_struct);
 void window_init_with_border(WINDOW* windows[], int win_order_code, WIN_INFO* info_struct);

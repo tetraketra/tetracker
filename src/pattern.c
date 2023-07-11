@@ -3,12 +3,12 @@
 #include <string.h>
 
 void patterns_init(PATTERN patterns[]) {
-    char args_template[CHANNEL_ARGS]; // "---... args"
+    char args_template[CHANNEL_ARGS + 1]; // "---... args"
     for (int arg = 0; arg < CHANNEL_ARGS; arg++) {
         args_template[arg] = '-';
     }
 
-    char note_template[4] = "---";
+    char note_template[3 + 1] = "---";
 
     for (int pattern = 0; pattern < PATTERNS; pattern++) {
         for (int step = 0; step < STEPS; step++) {
@@ -28,9 +28,11 @@ void patterns_draw_active(WINDOW* windows[], int win_order_code, PATTERN* patter
 
         mvwaddstr(windows[win_order_code], s_print_offset, 2, step_str); // step num
 
-        for (int current_channel = channel_offset, c_print_offset = 5; current_channel < channel_offset + num_channels_can_fit; current_channel++, c_print_offset += CHANNEL_CHAR_WIDTH) {
+        int c_print_offset = 5;
+        for (int current_channel = channel_offset; current_channel < channel_offset + num_channels_can_fit; current_channel++) {
             mvwaddstr(windows[win_order_code], s_print_offset, c_print_offset + 1, patterns[active_pattern].steps[current_step].channels[current_channel].note);
             mvwaddstr(windows[win_order_code], s_print_offset, c_print_offset + 5, patterns[active_pattern].steps[current_step].channels[current_channel].args);
+            c_print_offset += CHANNEL_CHAR_WIDTH;
         }
         
 

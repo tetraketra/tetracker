@@ -19,6 +19,8 @@
         "pattern.h": "c",
         "string.h": "c",
         "window.h": "c",
-        "locale": "c"
+        "locale": "c",
+        "random": "c",
+        "algorithm": "c"
     }
 }

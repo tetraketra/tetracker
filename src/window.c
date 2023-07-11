@@ -1,25 +1,6 @@
 #include <ncursesw/curses.h>
 #include "window.h"
 
-WIN_BORDER WB_STANDALONE                = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╔", .tr = "╗", .bl = "╚", .br = "╝"};
-
-WIN_BORDER WB_CONNECTS_RIGHT            = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╔", .tr = "╦", .bl = "╚", .br = "╩"};
-WIN_BORDER WB_CONNECTS_LEFT             = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╦", .tr = "╗", .bl = "╩", .br = "╝"};
-WIN_BORDER WB_CONNECTS_UP               = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╠", .tr = "╣", .bl = "╚", .br = "╝"};
-WIN_BORDER WB_CONNECTS_DOWN             = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╔", .tr = "╗", .bl = "╠", .br = "╠"};
-
-WIN_BORDER WB_CONNECTS_RIGHT_DOWN       = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╔", .tr = "╦", .bl = "╠", .br = "╬"};
-WIN_BORDER WB_CONNECTS_RIGHT_UP         = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╠", .tr = "╬", .bl = "╚", .br = "╩"};
-WIN_BORDER WB_CONNECTS_RIGHT_UP_DOWN    = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╠", .tr = "╬", .bl = "╠", .br = "╬"};
-
-WIN_BORDER WB_CONNECTS_LEFT_DOWN        = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╦", .tr = "╗", .bl = "╬", .br = "╣"};
-WIN_BORDER WB_CONNECTS_LEFT_UP          = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╬", .tr = "╣", .bl = "╩", .br = "╝"};
-WIN_BORDER WB_CONNECTS_LEFT_UP_DOWN     = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╬", .tr = "╣", .bl = "╬", .br = "╣"};
-
-WIN_BORDER WB_CONNECTS_LR_DOWN          = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╦", .tr = "╦", .bl = "╬", .br = "╬"};
-WIN_BORDER WB_CONNECTS_LR_UP            = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╬", .tr = "╬", .bl = "╩", .br = "╩"};
-WIN_BORDER WB_CONNECTS_LR_UP_DOWN       = {.ls = "║", .rs = "║", .ts = "═", .bs = "═", .tl = "╬", .tr = "╬", .bl = "╬", .br = "╬"};
-
 WINDOW* window_init(WIN_INFO* info_struct) {
     return newwin(info_struct->height, info_struct->width, info_struct->starty, info_struct->startx);
 }
@@ -40,7 +21,7 @@ void window_fill_with_char(WINDOW* windows[], int win_order_code, WIN_INFO* info
         for (int w = 0; w < info_struct->width; w++) {
             if (respect_border && (w == 0 || w == info_struct->width - 1 || h == 0 || h == info_struct->height - 1))
                 continue;
-                
+
             mvwaddch(windows[win_order_code], h, w, fill_char);
         }
     }
