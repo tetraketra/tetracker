@@ -51,11 +51,14 @@ void window_move_and_resize_and_draw_border_to(WINDOW* windows[], int win_order_
         window_draw_border_to(windows, win_order_code, info_struct);
 }
 
-void windows_refresh_all(WINDOW* windows[], int win_count) {
+void windows_refresh_all(WINDOW* windows[], int win_count, int active_window, int cursor_y, int cursor_x) {
     refresh(); // ncurses needs this more than I need a life
     for (int i = 0; i < win_count; i++) {
         wrefresh(windows[i]);
     }
+    wrefresh(windows[active_window]);
+    wmove(windows[active_window], cursor_y, cursor_x);
+    
 }
 
 void windows_clear_all(WINDOW* windows[], int win_count) {

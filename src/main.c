@@ -32,11 +32,15 @@ int main(void) {
     clock_t start_time, end_time;
 
     WINDOW* windows[_WINDOWS];
+    int active_window = WO_ONP;
 
     ncurses_setup(FPS);
 
     int maxlines = LINES - 1;
     int maxcols = COLS;
+
+    int cursor_y = 0;
+    int cursor_x = 0;
 
     // init patterns
     int active_pattern = 0;
@@ -77,7 +81,7 @@ int main(void) {
     patterns_draw_active(windows, WO_ONP, patterns, active_pattern, step_offset, channel_offset, (maxcols - 2 - 5)/CHANNEL_CHAR_WIDTH, maxlines / 2 + maxlines % 2 - 1);
     // all the draw calls
     
-    windows_refresh_all(windows, _WINDOWS); // push initial states to screen
+    windows_refresh_all(windows, _WINDOWS, active_window, cursor_y, cursor_x); // push initial states to screen
     
     // draw loop
     int ch;
@@ -95,7 +99,15 @@ int main(void) {
                 free(patterns);
                 return 0;
 
-            case KEY_DOWN ... KEY_RIGHT:            
+            case KEY_DOWN ... KEY_RIGHT:   
+
+                // all the draw calls // TODO make macro ?
+                window_move_and_resize_and_draw_border_to(windows, WO_BASE, &base);
+                window_move_and_resize_and_draw_border_to(windows, WO_ONP, &outer_notes_panel);
+                window_move_and_resize_and_draw_border_to(windows, WO_ONP_RF, &onp_right_filler);
+                patterns_draw_active(windows, WO_ONP, patterns, active_pattern, step_offset, channel_offset, channels_can_fit, maxlines / 2 + maxlines % 2 - 1);
+                // all the draw calls
+
                 break;
 
             case KEY_RESIZE: // re-init windows
@@ -135,7 +147,8 @@ int main(void) {
                 break;
         }
 
-        windows_refresh_all(windows, _WINDOWS);
+        windows_refresh_all(windows, _WINDOWS, active_window, cursor_y, cursor_x);
+        
 
         // sync to FPS
         end_time = clock();

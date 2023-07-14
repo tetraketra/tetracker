@@ -19,7 +19,7 @@ WINDOW* window_init(WIN_INFO* info_struct);
 void window_draw_border_to(WINDOW* windows[], int win_order_code, WIN_INFO* info_struct);
 void window_init_with_border(WINDOW* windows[], int win_order_code, WIN_INFO* info_struct);
 void window_move_and_resize_and_draw_border_to(WINDOW* windows[], int win_order_code, WIN_INFO* info_struct);
-void windows_refresh_all(WINDOW* windows[], int win_count);
+void windows_refresh_all(WINDOW* windows[], int win_count, int active_window, int cursor_y, int cursor_x);
 void windows_clear_all(WINDOW* windows[], int win_count);
 void windows_draw_borders_to_all(WINDOW* windows[], int win_count, WIN_INFO* info_structs[]);
 void window_fill_with_unicode_four_wide(WINDOW* windows[], int win_order_code, WIN_INFO* info_struct, char fill_char[4], bool respect_border);
